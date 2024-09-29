@@ -1,12 +1,15 @@
 #include "include.h"
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void* server_handling(void* arg){
+    pthread_mutex_lock(&mutex);
     int client_fd = *((int*)arg);
     handle_request(client_fd);
+    pthread_mutex_unlock(&mutex);
+
     free(arg); 
     return NULL;
 }
-
 
 void handle_sigpipe(int sig) {
     printf("Caught SIGPIPE signal. Client closed the connection.\n");

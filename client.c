@@ -42,7 +42,10 @@ int main(int argc, char* argv[]) {
             int read_bytes = 0;
             while ((read_bytes = recv(sockfd, response, NUM - 1, 0)) > 0) {
                 response[read_bytes] = '\0';
-                printf("%s\n", response);
+                fflush(stdout);
+                fflush(stdin); 
+
+                printf("%s",response);
                 if (strcmp(response, "404 error protocol\n") == 0 || 
                     strcmp(response, "SERVER RESPONSE\n404 file not found\n") == 0) {
                     close(sockfd);
@@ -73,22 +76,27 @@ int main(int argc, char* argv[]) {
 
             char success_response[RR];
             int read_bytes = 0;
-            while ((read_bytes = recv(sockfd, success_response, RR - 1, 0)) > 0) {
-                success_response[read_bytes] = '\0';
-                printf("%s\n", success_response);
-            }
+            // while ((read_bytes = recv(sockfd, success_response, RR - 1, 0)) > 0) {
+            //     success_response[read_bytes] = '\0';
+            //     printf("%s\n", success_response);
+            // }
 
             char response[NUM];
             while ((read_bytes = recv(sockfd, response, NUM - 1, 0)) > 0) {
                 response[read_bytes] = '\0';
+                fflush(stdout); 
+                fflush(stdin); 
+
                 printf("%s", response);
-            printf("enter 'enter' for entering new request\n");
-            getchar();
+                break;
             }
+
             if (read_bytes < 0) {
                 perror("recv error: ");
                 exit(EXIT_FAILURE);
             }
+            printf("enter 'enter' for entering new request\n");
+            getchar();
         } else if (strcmp("OPTIONS", token) == 0 || strcmp("DELETE", token) == 0) {
             char present[RR];
             int read_bytes = recv(sockfd, present, sizeof(present) - 1, 0);  
@@ -96,7 +104,9 @@ int main(int argc, char* argv[]) {
                 perror("read error: ");
                 exit(EXIT_FAILURE);
             }
-            present[read_bytes] = '\0';  
+            present[read_bytes] = '\0'; 
+            fflush(stdout); 
+            fflush(stdin); 
             printf("%s\n", present);  
             if (strcmp(present, "404 error protocol\n") == 0) {
                 close(sockfd);
@@ -110,3 +120,4 @@ int main(int argc, char* argv[]) {
     close(sockfd);
     return 0;
 }
+

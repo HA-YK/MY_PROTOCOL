@@ -1,5 +1,6 @@
 #include "include.h"
-void handle_get(char* filename, int fd) {
+void handle_get(char* filename, int fd,char* protocol) {
+
     FILE* file = fopen(filename, "rb");
 
     if (file == NULL) {
@@ -25,17 +26,18 @@ void handle_get(char* filename, int fd) {
     fclose(file);
 }
 
-void handle_header(int fd) {
+void handle_header(int fd,char* protocol) {
+
     char buf[RR];
-    snprintf(buf, sizeof(buf), "%s", "----CHLP PROTOCOL PRESENT----\n-->USAGE <request> </filename> <protocolname><--\nrequests-->POST,OPTIONS,DELETE,GET<--\n-->GET-Server give you file size(body-size) and content\nPOST-write to file, server give you writed file,DELETE-delete file from server<--\n-->RETURN CODES 404:file not found, 419:Error opening file, 200:OK, codes\nserver listen to many clients\n");
-    
+    snprintf(buf, sizeof(buf), "%s","----CHLP PROTOCOL PRESENT----\n-->USAGE <request> </filename> <protocolname><--\nrequests-->POST,OPTIONS,DELETE,GET<--\n-->GET-Server give you file size(body-size) and content\nPOST-write to file, server give you writed file,DELETE-delete file from server<--\n-->RETURN CODES 404:file not found, 419:Error opening file, 200:OK, codes\nserver listen to many clients\n"); 
     int len = strlen(buf); 
     if (send(fd, buf, len, 0) == -1) { 
         perror("send error: ");
         exit(1);
     }
     printf("resposne sendit succsesfuly\n");
-}void handle_post(char* filename, int fd) {
+}
+void handle_post(char* filename, int fd) {
     printf("handling POST request\n");
     char recv_buffer[MSG_FILE];
     int read_bytes = recv(fd, recv_buffer, MSG_FILE, 0);
@@ -79,7 +81,8 @@ void handle_header(int fd) {
 }
 
 
-void handle_delete(char* filename,int fd){\
+void handle_delete(char* filename,int fd,char* protocol){
+    
     int f = open(filename,O_RDWR);
     if(f < 0){
     
@@ -118,30 +121,22 @@ void handle_request(int fd){
     strcpy(filename,token);
     token = strtok(NULL," ");
     strcpy(protocol,token);
+    
 
-
-
-    if(strcmp(protocol,"CHLP\n") != 0 || strncmp(protocol,"CHLP",4) != 0){
-        printf("invalid name of protocol\n");
-        char buf[MAX_PROTOCOL];
-        snprintf(buf,MAX_PROTOCOL,"%s","404 error protocol\n");
-        if(send(fd,buf,MAX_PROTOCOL,0) == -1){
-            perror("send error: ");
-        }
-        return;
-    }
+    
     if(strcmp(request_type,"GET") == 0){
-        handle_get(filename,fd);
+        handle_get(filename,fd,protocol);
     }
     else if(strcmp(request,"POST") == 0){
         handle_post(filename,fd);
 
     }
     else if(strcmp(request,"OPTIONS") == 0){
-        handle_header(fd);
+        handle_header(fd,protocol);
     }
     else if(strcmp(request,"DELETE") == 0){
-        handle_delete(filename,fd);
+        handle_delete(filename,fd,protocol);
     }
     }
 }
+
