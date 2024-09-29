@@ -27,7 +27,7 @@ void handle_get(char* filename, int fd) {
 
 void handle_header(int fd) {
     char buf[RR];
-    snprintf(buf, sizeof(buf), "%s", "----CHLP PROTOCOL PRESENT----\n-->USAGE <request> </filename> <protocolname><--\nrequests-->POST,HEADERS,GET<--\n-->GET-Server give you file size(body-size) and content\nPOST-write to file, server give you writed file<--\n-->RETURN CODES 404:file not found, 419:Error opening file, 200:OK, codes\nserver listen to many clients\n");
+    snprintf(buf, sizeof(buf), "%s", "----CHLP PROTOCOL PRESENT----\n-->USAGE <request> </filename> <protocolname><--\nrequests-->POST,OPTIONS,DELETE,GET<--\n-->GET-Server give you file size(body-size) and content\nPOST-write to file, server give you writed file,DELETE-delete file from server<--\n-->RETURN CODES 404:file not found, 419:Error opening file, 200:OK, codes\nserver listen to many clients\n");
     
     int len = strlen(buf); 
     if (send(fd, buf, len, 0) == -1) { 
