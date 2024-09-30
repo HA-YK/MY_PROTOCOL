@@ -1,5 +1,5 @@
 #include "include.h"
-void handle_get(char* filename, int fd,char* protocol) {
+void handle_get(char* filename, int fd) {
 
     FILE* file = fopen(filename, "rb");
 
@@ -26,7 +26,7 @@ void handle_get(char* filename, int fd,char* protocol) {
     fclose(file);
 }
 
-void handle_header(int fd,char* protocol) {
+void handle_header(int fd) {
 
     char buf[RR];
     snprintf(buf, sizeof(buf), "%s", "----CHLP PROTOCOL PRESENT----\n-->USAGE <request> </filename> <protocolname><--\nrequests-->POST,HEADERS,GET<--\n-->GET-Server give you file size(body-size) and content\nPOST-write to file, server give you writed file<--\n-->RETURN CODES 404:file not found, 419:Error opening file, 200:OK, codes\nserver listen to many clients\n");
@@ -82,7 +82,7 @@ void handle_post(char* filename, int fd) {
 }
 
 
-void handle_delete(char* filename,int fd,char* protocol){
+void handle_delete(char* filename,int fd){
     
     int f = open(filename,O_RDWR);
     if(f < 0){
